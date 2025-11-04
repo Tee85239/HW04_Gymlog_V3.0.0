@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">HW04_Gymlog_V3.0.0</string>
+    <string name="exercise">Exercise</string>
+    <string name="add_exercise">Add Exercise</string>
+    <string name="weight">Weight</string>
+    <string name="enter_weight">Enter Weight</string>
+    <string name="weights">Weight</string>
+    <string name="enter_rep">Enter Rep</string>
+    <string name="log">Log</string>
 </resources>
