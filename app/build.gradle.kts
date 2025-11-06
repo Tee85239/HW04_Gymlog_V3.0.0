@@ -48,4 +48,9 @@ dependencies {
 
     implementation(libs.room.runtime)
     annotationProcessor( libs.room.compiler)
+    val room_version = "2.8.3"
+
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+
 }
