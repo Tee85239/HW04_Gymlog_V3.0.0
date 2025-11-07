@@ -13,14 +13,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.hw04_gymlog_v300.database.GymLogRepsository;
+import com.example.hw04_gymlog_v300.database.entites.GymLog;
 import com.example.hw04_gymlog_v300.databinding.ActivityMainBinding;
 
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    ActivityMainBinding binding;
+   private ActivityMainBinding binding;
 
+   private GymLogRepsository repsository;
     public static final String tag = "DAC_GYMLOG";
     String mExercise = "";
     double mWeight;
@@ -33,17 +36,24 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.logDisplayTextView.setMovementMethod(new ScrollingMovementMethod());
-
-    binding.logButton.setOnClickListener(new View.OnClickListener() {
+        repsository = GymLogRepsository.getReposoitory(getApplication());
+        binding.logButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             getInformationFromDisplay();
+            insertGymLogRecord();
             updateDisplay();
         }
     });
 
     }
 
+
+    private void insertGymLogRecord(){
+        GymLog log = new GymLog(mExercise,mWeight,mReps);
+        repsository.insertGymLog(log);
+
+    }
     private void updateDisplay(){
         String currentInfo = binding.logDisplayTextView.getText().toString();
         Log.d(tag, "current info: " + currentInfo);
@@ -52,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         binding.logDisplayTextView.setText(newDisplay);
+        Log.i(tag, repsository.getAllLogs().toString());
     }
     private void getInformationFromDisplay()
     {
