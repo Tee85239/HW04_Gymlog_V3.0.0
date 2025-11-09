@@ -80,15 +80,13 @@ binding.exerciseInputText.setOnClickListener(new View.OnClickListener() {
     private void updateDisplay(){
         StringBuilder sb = new StringBuilder();
         ArrayList<GymLog> allLogs = repsository.getAllLogs();
-        if(allLogs.isEmpty()){
+        if(allLogs.isEmpty()) {
             binding.logDisplayTextView.setText("Nothing to show, time to hit the gym.");
-
+        }
             for(GymLog log : allLogs){
                 sb.append(log);
 
             }
-        }
-
 
 
         binding.logDisplayTextView.setText(sb.toString());
