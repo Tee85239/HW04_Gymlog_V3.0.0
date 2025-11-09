@@ -1,5 +1,6 @@
 package com.example.hw04_gymlog_v300;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -17,6 +18,7 @@ import com.example.hw04_gymlog_v300.database.GymLogRepsository;
 import com.example.hw04_gymlog_v300.database.entites.GymLog;
 import com.example.hw04_gymlog_v300.databinding.ActivityMainBinding;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     double mWeight;
     int mReps;
 
+    //TODO: add login info
+    int loggedInUserID = -1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +41,9 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.logDisplayTextView.setMovementMethod(new ScrollingMovementMethod());
+
         repsository = GymLogRepsository.getReposoitory(getApplication());
+        updateDisplay();
         binding.logButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -46,23 +53,46 @@ public class MainActivity extends AppCompatActivity {
         }
     });
 
+binding.exerciseInputText.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
+        updateDisplay();
+    }
+});
+
+
+
+
+
     }
 
 
     private void insertGymLogRecord(){
-        GymLog log = new GymLog(mExercise,mWeight,mReps);
+        if(mExercise.isEmpty()){
+            return;
+        }
+
+        GymLog log = new GymLog(mExercise,mWeight,mReps, loggedInUserID);
         repsository.insertGymLog(log);
 
     }
+    @SuppressLint("SetTextI18n")
     private void updateDisplay(){
-        String currentInfo = binding.logDisplayTextView.getText().toString();
-        Log.d(tag, "current info: " + currentInfo);
-        String newDisplay = String.format(Locale.US,"Exercise:%s%nWeight:%.2f%nReps:%d%n=-=-=-=%n%s",mExercise,mWeight,mReps,currentInfo);
+        StringBuilder sb = new StringBuilder();
+        ArrayList<GymLog> allLogs = repsository.getAllLogs();
+        if(allLogs.isEmpty()){
+            binding.logDisplayTextView.setText("Nothing to show, time to hit the gym.");
+
+            for(GymLog log : allLogs){
+                sb.append(log);
+
+            }
+        }
 
 
 
-        binding.logDisplayTextView.setText(newDisplay);
-        Log.i(tag, repsository.getAllLogs().toString());
+        binding.logDisplayTextView.setText(sb.toString());
+
     }
     private void getInformationFromDisplay()
     {

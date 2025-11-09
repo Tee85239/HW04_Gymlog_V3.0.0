@@ -13,17 +13,21 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.hw04_gymlog_v300.database.entites.GymLog;
 import com.example.hw04_gymlog_v300.MainActivity;
+import com.example.hw04_gymlog_v300.database.entites.User;
 import com.example.hw04_gymlog_v300.database.typeConverter.LocalDateTypeConverter;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @TypeConverters(LocalDateTypeConverter.class)
-@Database(entities = {GymLog.class}, version = 1, exportSchema = false)
+@Database(entities = {GymLog.class, User.class}, version = 1 , exportSchema = false)
 public abstract class GymLogDataBase extends RoomDatabase {
 
-    private static final String DATABASE_NAME = "GymLog_Database";
+    public static final String USER_TABLE = "usertable";
+    private static final String DATABASE_NAME = "GymLogDatabase";
 
     public static final String GYM_LOG_TABLE = "gymLogTable";
 
@@ -42,17 +46,31 @@ public abstract class GymLogDataBase extends RoomDatabase {
         return INSTANCE;
     }
 
-    private static final RoomDatabase.Callback addDefaultValues = new RoomDatabase.Callback(){
+    private static final Callback addDefaultValues = new Callback(){
     @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
         super.onCreate(db);
         Log.i(MainActivity.tag, "Database created");
-        //TODO: Add databaseWriterExecutor.execute(() -> {...}
+        databaseWriteExecutor.execute(() -> {
+            UserDAO dao = INSTANCE.userDao();
+            // dao.deleteALL();
+            User admin = new User("admin1", "admin1");
+            admin.setAdmin(true);
+            dao.insert(admin);
+
+            User testUser1 = new User("testUser1", "testUser1");
+            testUser1.setAdmin(false);
+            dao.insert(testUser1);
+        });
+
+
     }
 
     };
 
     //If wrong watch vid 3
     public abstract GymLogDAO gymLogDAO() ;
+
+    public abstract UserDAO userDao();
 
 }

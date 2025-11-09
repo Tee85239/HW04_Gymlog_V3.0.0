@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.hw04_gymlog_v300.database.entites.GymLog;
 import com.example.hw04_gymlog_v300.MainActivity;
+import com.example.hw04_gymlog_v300.database.entites.User;
 
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -16,11 +17,13 @@ public class GymLogRepsository {
     private static GymLogRepsository repsository;
 
 
-    private GymLogDAO gymLogDAO;
+    private final GymLogDAO gymLogDAO;
+    private final UserDAO userDAO;
     private ArrayList<GymLog> allLogs;
     private GymLogRepsository(Application application){
         GymLogDataBase db = GymLogDataBase.getDatabase(application);
         this.gymLogDAO = db.gymLogDAO();
+        this.userDAO = db.userDao();
         this.allLogs = (ArrayList<GymLog>) this.gymLogDAO.getAllRecords();
     }
 public static GymLogRepsository getReposoitory(Application application){
@@ -62,6 +65,12 @@ public static GymLogRepsository getReposoitory(Application application){
     public void insertGymLog(GymLog gymlog){
         GymLogDataBase.databaseWriteExecutor.execute(() -> {
             gymLogDAO.insert(gymlog);
+        });
+    }
+
+    public void insertUser(User... user){
+        GymLogDataBase.databaseWriteExecutor.execute(() -> {
+            userDAO.insert(user);
         });
     }
 }
