@@ -2,6 +2,8 @@ package com.example.hw04_gymlog_v300;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -23,7 +25,8 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-   private ActivityMainBinding binding;
+    private static final String MAIN_ACTIVITY_USER_ID = "com.example.hw04_gymlog_v300.MAIN_ACTIVITY_USER_ID";
+    private ActivityMainBinding binding;
 
    private GymLogRepsository repsository;
     public static final String tag = "DAC_GYMLOG";
@@ -40,7 +43,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+
+        loginUser();
+
+        if(loggedInUserID == -1){
+            Intent intent = LoginActivity.loginIntentFactory(getApplicationContext());
+            startActivity(intent);
+
+        }
+
+
+
         binding.logDisplayTextView.setMovementMethod(new ScrollingMovementMethod());
+
+
+
+
 
         repsository = GymLogRepsository.getReposoitory(getApplication());
         updateDisplay();
@@ -66,6 +85,17 @@ binding.exerciseInputText.setOnClickListener(new View.OnClickListener() {
 
     }
 
+    private void loginUser() {
+        //TODO: create login method
+        loggedInUserID = getIntent().getIntExtra(MAIN_ACTIVITY_USER_ID,-1);
+
+    }
+static Intent mainActivityIntentFactory(Context context, int userId) {
+    Intent intent = new Intent(context, MainActivity.class);
+    intent.putExtra(MAIN_ACTIVITY_USER_ID, userId);
+    return intent;
+
+}
 
     private void insertGymLogRecord(){
         if(mExercise.isEmpty()){
