@@ -35,7 +35,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     static final String SHARED_PREFRENCE_USERID_KEY = "com.example.hw04_gymlog_v300.PREFRENCE_USERID_KEY";
-    static final String MAIN_ACTIVITY_USERID_KEY_VALUE= "com.example.hw04_gymlog_v300.PREFRENCE_USERID_KEY_VALUE";
+  //  static final String MAIN_ACTIVITY_USERID_KEY_VALUE= "com.example.hw04_gymlog_v300.PREFRENCE_USERID_KEY_VALUE";
     static final String SAVED_INSTANCE_STATE_USERID_KEY = "com.example.hw04_gymlog_v300.SAVED_INSTANCE_STATE_USERID_KEY";
     private static final String MAIN_ACTIVITY_USER_ID = "com.example.hw04_gymlog_v300.MAIN_ACTIVITY_USER_ID";
     private static final int LOGGED_OUT = -1;
@@ -101,13 +101,20 @@ public class MainActivity extends AppCompatActivity {
     }
     private void logout() {
         //TODO FINISH LOGOUT
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(SHARED_PREFRENCE_USERID_KEY,Context.MODE_PRIVATE);
-        SharedPreferences.Editor sharedprefernceEditor = sharedPreferences.edit();
-        sharedprefernceEditor.putInt(SHARED_PREFRENCE_USERID_KEY,LOGGED_OUT);
-        sharedprefernceEditor.apply();
 
+        loggedInUserID = LOGGED_OUT;
+        updateSharedPreference();
         getIntent().putExtra(MAIN_ACTIVITY_USER_ID,LOGGED_OUT);
         startActivity(LoginActivity.loginIntentFactory(getApplicationContext()));
+    }
+
+    private void updateSharedPreference(){
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedprefernceEditor = sharedPreferences.edit();
+        sharedprefernceEditor.putInt(getString(R.string.preference_user_ID_key),loggedInUserID);
+        sharedprefernceEditor.apply();
+
+
     }
 
     @Override
@@ -121,12 +128,14 @@ public class MainActivity extends AppCompatActivity {
         loginUser(savedInstanceState);
 
 
-
+        //User not logged in at this point
         if(loggedInUserID == -1){
             Intent intent = LoginActivity.loginIntentFactory(getApplicationContext());
             startActivity(intent);
 
         }
+        updateSharedPreference();
+
 
 
 
@@ -162,11 +171,11 @@ binding.exerciseInputText.setOnClickListener(new View.OnClickListener() {
 
     private void loginUser(Bundle savedInstanceState) {
         //TODO: create login method
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(SHARED_PREFRENCE_USERID_KEY,Context.MODE_PRIVATE);
-      if(sharedPreferences.contains(MAIN_ACTIVITY_USERID_KEY_VALUE)){
-          loggedInUserID = sharedPreferences.getInt(MAIN_ACTIVITY_USERID_KEY_VALUE,LOGGED_OUT);
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
 
-      }
+          loggedInUserID = sharedPreferences.getInt(getString(R.string.preference_user_ID_key),LOGGED_OUT);
+
+
 
       if(loggedInUserID == LOGGED_OUT & savedInstanceState != null && savedInstanceState.containsKey(SAVED_INSTANCE_STATE_USERID_KEY)){
         loggedInUserID = savedInstanceState.getInt(SAVED_INSTANCE_STATE_USERID_KEY,LOGGED_OUT);
@@ -191,11 +200,8 @@ binding.exerciseInputText.setOnClickListener(new View.OnClickListener() {
             if(this.user != null){
                 invalidateOptionsMenu();
 
-            }else{
-                //TODO: verify if issue
-          //      logout();
-
             }
+
 
         });
 
@@ -206,10 +212,8 @@ binding.exerciseInputText.setOnClickListener(new View.OnClickListener() {
 
     {
         super.onSaveInstanceState(outState);
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFRENCE_USERID_KEY, Context.MODE_PRIVATE);
-        SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit();
-        sharedPrefEditor.putInt(MainActivity.SHARED_PREFRENCE_USERID_KEY, loggedInUserID);
-        sharedPrefEditor.apply();
+       outState.putInt(SAVED_INSTANCE_STATE_USERID_KEY,loggedInUserID);
+       updateSharedPreference();
 
     }
 
