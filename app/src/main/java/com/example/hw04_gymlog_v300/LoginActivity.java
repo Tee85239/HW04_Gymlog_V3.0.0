@@ -3,20 +3,29 @@ package com.example.hw04_gymlog_v300;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.LiveData;
 
+import com.example.hw04_gymlog_v300.database.GymLogRepsository;
+import com.example.hw04_gymlog_v300.database.entites.User;
 import com.example.hw04_gymlog_v300.databinding.ActivityLoginBinding;
 
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding binding;
+
+    private GymLogRepsository repsository;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,14 +34,47 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(binding.getRoot());
 
+        repsository = GymLogRepsository.getReposoitory(getApplication());
+
+
        binding.loginButton.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               Intent intent = MainActivity.mainActivityIntentFactory(getApplicationContext(),0);
-               startActivity(intent);
+            verifyUser();
            }
        });
 
+    }
+
+    private void verifyUser(){
+        String username = binding.userNameLoginEditText.getText().toString();
+
+        if(username.isEmpty()){
+            toastMaker("Username may not be blank");
+            return;
+        }
+        LiveData<User> userObserver = repsository.getUserByUserName(username);
+        userObserver.observe(this, user -> {
+            if(user != null){
+                String password = binding.passwordLoginEditText.getText().toString();
+                if(password.equals(user.getPassword())){
+
+                    startActivity((MainActivity.mainActivityIntentFactory(getApplicationContext(), user.getId())));
+                }else{
+                    toastMaker("Invalid Password");
+                    binding.passwordLoginEditText.setSelection(0);
+                }
+            }else{
+                toastMaker(String.format("%s is not a valid username"));
+                binding.userNameLoginEditText.setSelection(0);
+            }
+
+        });
+
+    }
+
+    private void toastMaker(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     static Intent loginIntentFactory(Context context){
