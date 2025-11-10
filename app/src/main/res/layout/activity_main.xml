@@ -11,7 +11,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="0dp"
-        android:layout_height="150dp"
+        android:layout_height="300dp"
         tools:listitem="@layout/gymlog_recyler_item"
         android:padding="2dp"
         android:layout_marginTop="16dp"
@@ -19,7 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:id="@+id/logDisplayRecylerView"
-
 
 
         />
@@ -30,7 +29,7 @@
         android:layout_width="132dp"
         android:layout_height="25dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="196dp"
         android:text="@string/exercise"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -119,7 +118,7 @@
         android:layout_width="390dp"
         android:layout_height="125dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="168dp"
+        android:layout_marginTop="184dp"
         android:text="@string/log"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"

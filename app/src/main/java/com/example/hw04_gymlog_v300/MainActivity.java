@@ -138,12 +138,19 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adator);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+
+
         repsository = GymLogRepsository.getReposoitory(getApplication());
         loginUser(savedInstanceState);
+        gymLogViewModel.getAllLogsByID(loggedInUserID).observe(this, gymLogs -> {adator.submitList(gymLogs);});
+
+
+
+
 
 
         //User not logged in at this point
-        if(loggedInUserID == -1){
+        if(loggedInUserID == LOGGED_OUT){
             Intent intent = LoginActivity.loginIntentFactory(getApplicationContext());
             startActivity(intent);
 
@@ -169,16 +176,6 @@ public class MainActivity extends AppCompatActivity {
            // updateDisplay();
         }
     });
-
-        /* //TODO REMOVE
-binding.exerciseInputText.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View view) {
-        //updateDisplay();
-    }
-});
-
-*/
 
 
 
