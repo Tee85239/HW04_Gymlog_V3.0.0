@@ -23,11 +23,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hw04_gymlog_v300.database.GymLogRepsository;
 import com.example.hw04_gymlog_v300.database.entites.GymLog;
 import com.example.hw04_gymlog_v300.database.entites.User;
 import com.example.hw04_gymlog_v300.databinding.ActivityMainBinding;
+import com.example.hw04_gymlog_v300.viewHolder.GymLogAdator;
+import com.example.hw04_gymlog_v300.viewHolder.GymLogViewHolder;
+import com.example.hw04_gymlog_v300.viewHolder.GymLogViewModel;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -43,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
    private GymLogRepsository repsository;
+   private GymLogViewModel gymLogViewModel;
+
     public static final String tag = "DAC_GYMLOG";
     String mExercise = "";
     double mWeight;
@@ -123,6 +131,12 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        gymLogViewModel = new ViewModelProvider(this).get(GymLogViewModel.class);
+
+        RecyclerView recyclerView = binding.logDisplayRecylerView;
+        final GymLogAdator adator= new GymLogAdator(new GymLogAdator.GymlogDiff());
+        recyclerView.setAdapter(adator);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         repsository = GymLogRepsository.getReposoitory(getApplication());
         loginUser(savedInstanceState);
@@ -137,33 +151,34 @@ public class MainActivity extends AppCompatActivity {
         updateSharedPreference();
 
 
+        //TODO:REMOVE two lines below
 
-
-        binding.logDisplayTextView.setMovementMethod(new ScrollingMovementMethod());
-
-
-
+       // binding.logDisplayTextView.setMovementMethod(new ScrollingMovementMethod());
 
 
 
-        updateDisplay();
+
+
+    //TODO: remove line below
+       // updateDisplay();
         binding.logButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             getInformationFromDisplay();
             insertGymLogRecord();
-            updateDisplay();
+           // updateDisplay();
         }
     });
 
+        /* //TODO REMOVE
 binding.exerciseInputText.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View view) {
-        updateDisplay();
+        //updateDisplay();
     }
 });
 
-
+*/
 
 
 
@@ -233,12 +248,14 @@ static Intent mainActivityIntentFactory(Context context, int userId) {
         repsository.insertGymLog(log);
 
     }
+
+    @Deprecated
     @SuppressLint("SetTextI18n")
     private void updateDisplay(){
         StringBuilder sb = new StringBuilder();
         ArrayList<GymLog> allLogs = repsository.getAllLogsByUserID(loggedInUserID);
         if(allLogs.isEmpty()) {
-            binding.logDisplayTextView.setText("Nothing to show, time to hit the gym.");
+          //  binding.logDisplayTextView.setText("Nothing to show, time to hit the gym.");
         }
             for(GymLog log : allLogs){
                 sb.append(log);
@@ -246,7 +263,7 @@ static Intent mainActivityIntentFactory(Context context, int userId) {
             }
 
 
-        binding.logDisplayTextView.setText(sb.toString());
+        // binding.logDisplayTextView.setText(sb.toString());
 
     }
     private void getInformationFromDisplay()

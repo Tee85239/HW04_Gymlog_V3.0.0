@@ -89,6 +89,14 @@ public static GymLogRepsository getReposoitory(Application application){
 
     }
 
+    public LiveData<List<GymLog>> updateSharedPreferenceLiveData(int loggedInUserID){
+        return gymLogDAO.getAllRecordsByUserIDLiveData(loggedInUserID);
+    }
+
+
+
+
+    @Deprecated
     public ArrayList<GymLog>getAllLogsByUserID(int loggedInUserID) {
 
         Future<ArrayList<GymLog>> future = GymLogDataBase.databaseWriteExecutor.submit(new Callable<ArrayList<GymLog>>() {
